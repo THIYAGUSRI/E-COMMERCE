@@ -178,15 +178,13 @@ const uploadImage = async () => {
         <TextInput id='contactno' type='text' placeholder='Contact No' defaultValue={currentUser.contactno} onChange={handleChange}/>
         <Button
           type="submit"
-          className="relative px-6 py-2 text-white rounded-full border-2 border-transparent bg-transparent group" disabled={loading}>
-          <span className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full p-1 group-hover:from-pink-500 group-hover:to-yellow-500"></span>
-          <span className="relative z-10 block bg-white rounded-full text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-blue-500 group-hover:from-pink-500 group-hover:to-yellow-500 transition-colors duration-300 ease-in-out text-white">
+          className="w-full rounded-full p-1" gradientDuoTone='purpleToBlue' disabled={loading}>
           {loading ? 'Loading...': 'Update the detail'}
-          </span>
+          
         </Button>
         {currentUser.role=="buyer" && (
           <Link to={'/createproduct'}>
-            <Button type='button' gradientDuoTone='purpleToPink' className='w-full'>
+            <Button type='button' gradientDuoTone='purpleToPink' className='w-full rounded-full p-1'>
               Create the Product
             </Button>
           </Link>

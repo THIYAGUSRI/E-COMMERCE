@@ -8,20 +8,26 @@ import PrivateRoute from './Component/PrivateRoute'
 import DashBoard from './Pages/DashBoard'
 import CreateProduct from './Pages/CreateProduct'
 import OnlyBuyerPrivateRoute from './Component/OnlyBuyerPrivateRoute'
+import UpdateProduct from './Pages/UpdateProduct'
+import ProductPage from './Pages/ProductPage'
+import ScrollToTop from './Component/ScrollToTop'
 
 export default function App() {
   return (
     <BrowserRouter>
+    <ScrollToTop />
         <Header/>
         <Routes>
           <Route path='/' element={<Home/>}/>
           <Route path='/sign-in' element={<SignIn />}/>
           <Route path='/sign-up' element={<SignUp />}/>
+          <Route path='/product/:productSlug' element={<ProductPage />}/>
           <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<DashBoard />}/>
           </Route>
           <Route element={<OnlyBuyerPrivateRoute />}>
           <Route path='/createproduct' element={<CreateProduct />}/>
+          <Route path='/updateproduct/:postId' element={<UpdateProduct />}/>
           </Route>
         </Routes>
     </BrowserRouter>

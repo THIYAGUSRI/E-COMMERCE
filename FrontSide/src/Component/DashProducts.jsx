@@ -1,10 +1,14 @@
-import { Table } from 'flowbite-react';
+import { Button, Modal, Table } from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 export default function DashProducts() {
   const { currentUser } = useSelector((state) => state.user);
   const [userProducts, setUserProducts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState('');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -23,6 +27,27 @@ export default function DashProducts() {
       fetchProducts();
     }
   }, [currentUser]);
+
+  const handleDeleteProduct = async () => {
+    setShowModal(false);
+    try {
+      const res = await fetch(`/api/product/deleteproduct/${productIdToDelete}/${currentUser._id}`,
+        {
+          method: 'DELETE',
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setUserProducts((prev) =>
+          prev.filter((product) => product._id !== productIdToDelete)
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="p-4 w-full">
@@ -48,13 +73,16 @@ export default function DashProducts() {
                       className="w-20 h-10 object-cover"
                     />
                   </Table.Cell>
-                  <Table.Cell>{product.title}</Table.Cell>
+                  <Link to={`/product/${product.slug}`}><Table.Cell>{product.title}</Table.Cell></Link>
                   <Table.Cell>{product.category}</Table.Cell>
                   <Table.Cell>
-                    <span className="text-red-500 cursor-pointer">Delete</span>
+                    <span  onClick={() => {
+                      setShowModal(true);
+                      setProductIdToDelete(product._id);
+                    }} className="text-red-500 cursor-pointer hover:underline">Delete</span>
                   </Table.Cell>
                   <Table.Cell>
-                    <span className="text-blue-500 cursor-pointer">Edit</span>
+                    <Link className='text-teal-500 hover:underline' to={`/updateproduct/${product._id}`}><span>Edit</span></Link>
                   </Table.Cell>
                 </Table.Row>
               ))}
@@ -64,6 +92,30 @@ export default function DashProducts() {
       ) : (
         <p>You have no posts yet!</p>
       )}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size='md'
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+              Are you sure you want to delete this post?
+            </h3>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' onClick={handleDeleteProduct }>
+                Yes, I'm sure
+              </Button>
+              <Button color='gray' onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

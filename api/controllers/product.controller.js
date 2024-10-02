@@ -67,14 +67,48 @@ export const create = async (req, res, next) => {
     }
   };
   
-  export const deletepost = async (req, res, next) => {
-    if (!req.user.role =="buyer" || req.user.id !== req.params.userId) {
-      return next(errorHandler(403, 'You are not allowed to delete this post'));
+  export const deleteproduct = async (req, res, next) => {
+    try {
+      if (!req.user.role == 'buyer' || req.user.id !== req.params.userId) {
+        return next(errorHandler(403, 'You are not allowed to delete this product'));
+      }    
+      const deletedProduct = await Product.findByIdAndDelete(req.params.productId);
+      if (!deletedProduct) {
+        return next(errorHandler(404, 'Product not found'));
+      }
+      res.status(200).json({ message: 'The product has been deleted' });
+    } catch (error) {
+      next(error); 
+    }
+  };
+
+
+  export const updateproduct = async (req, res, next) => {
+    if (!req.user.role == 'buyer' || req.user.id !== req.params.userId) {
+      return next(errorHandler(403, 'You are not allowed to update this post'));
     }
     try {
-      await Post.findByIdAndDelete(req.params.postId);
-      res.status(200).json('The post has been deleted');
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.productId,
+        {
+          $set: {
+            companyname: req.body.companyname,
+            title: req.body.title,
+            content: req.body.content,
+            category: req.body.category,
+            image: req.body.image,
+            previousprice: req.body.previousprice,
+            price: req.body.price,
+            stock: req.body.stock,
+          },
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedProduct);
     } catch (error) {
       next(error);
     }
   };
+  
+
+
