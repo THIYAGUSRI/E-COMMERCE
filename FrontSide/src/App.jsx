@@ -7,7 +7,7 @@ import SignUp from './Pages/SignUp'
 import PrivateRoute from './Component/PrivateRoute'
 import DashBoard from './Pages/DashBoard'
 import CreateProduct from './Pages/CreateProduct'
-import OnlyBuyerPrivateRoute from './Component/OnlyBuyerPrivateRoute'
+import OnlySellerPrivateRoute from './Component/OnlySellerPrivateRoute'
 import UpdateProduct from './Pages/UpdateProduct'
 import ProductPage from './Pages/ProductPage'
 import ScrollToTop from './Component/ScrollToTop'
@@ -25,7 +25,7 @@ export default function App() {
           <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<DashBoard />}/>
           </Route>
-          <Route element={<OnlyBuyerPrivateRoute />}>
+          <Route element={<OnlySellerPrivateRoute />}>
           <Route path='/createproduct' element={<CreateProduct />}/>
           <Route path='/updateproduct/:postId' element={<UpdateProduct />}/>
           </Route>

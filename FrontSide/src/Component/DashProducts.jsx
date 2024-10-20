@@ -23,7 +23,7 @@ export default function DashProducts() {
       }
     };
 
-    if (currentUser?.role === "buyer") {
+    if (currentUser?.role === "seller") {
       fetchProducts();
     }
   }, [currentUser]);
@@ -51,7 +51,7 @@ export default function DashProducts() {
 
   return (
     <div className="p-4 w-full">
-      {currentUser?.role === "buyer" && userProducts.length > 0 ? (
+      {currentUser?.role === "seller" && userProducts.length > 0 ? (
         <div className="overflow-x-auto">
           <Table hoverable className="w-full border-collapse">
             <Table.Head className="bg-transparent">

@@ -2,7 +2,7 @@ import Product from "../models/product.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const create = async (req, res, next) => {
-    if (!req.user.role=="buyer") {
+    if (!req.user.role=="seller") {
       return next(errorHandler(403, 'You are not allowed to create a post'));
     }
     if (!req.body.title || !req.body.content || !req.body.price || !req.body.previousprice || !req.body.stock || !req.body.companyname ) {
@@ -69,7 +69,7 @@ export const create = async (req, res, next) => {
   
   export const deleteproduct = async (req, res, next) => {
     try {
-      if (!req.user.role == 'buyer' || req.user.id !== req.params.userId) {
+      if (!req.user.role == 'seller' || req.user.id !== req.params.userId) {
         return next(errorHandler(403, 'You are not allowed to delete this product'));
       }    
       const deletedProduct = await Product.findByIdAndDelete(req.params.productId);
@@ -84,7 +84,7 @@ export const create = async (req, res, next) => {
 
 
   export const updateproduct = async (req, res, next) => {
-    if (!req.user.role == 'buyer' || req.user.id !== req.params.userId) {
+    if (!req.user.role == 'seller' || req.user.id !== req.params.userId) {
       return next(errorHandler(403, 'You are not allowed to update this post'));
     }
     try {

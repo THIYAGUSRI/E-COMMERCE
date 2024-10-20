@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'; // Import heart icons
 import ReviewSection from '../Component/ReviewSection';
+import ProductCard from '../Component/ProductCard';
 
 export default function ProductPage() {
   const { productSlug } = useParams();
@@ -10,6 +11,7 @@ export default function ProductPage() {
   const [error, setError] = useState(false);
   const [product, setProduct] = useState(null);
   const [liked, setLiked] = useState(false); // State to manage heart icon toggle
+  const [moreProducts, setMoreProducts] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -35,6 +37,22 @@ export default function ProductPage() {
     fetchProduct();
   }, [productSlug]);
 
+
+  useEffect(() => {
+    try {
+      const fetchMoreProducts = async () => {
+        const res = await fetch(`/api/product/getproducts?limit=5`);
+        const data = await res.json();
+        if (res.ok) {
+          setMoreProducts(data.products);
+        }
+      };
+      fetchMoreProducts();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
+
   if (loading)
     return (
       <div className='flex justify-center items-center min-h-screen'>
@@ -48,6 +66,7 @@ export default function ProductPage() {
   };
 
   return (
+    <>
     <div className="min-h-screen flex items-center justify-center p-6 flex-col">
       {/* Main Container with Background and Padding */}
       <div className="bg-teal-50 p-8 rounded-lg shadow-lg max-w-5xl w-full flex flex-col md:flex-row items-start">
@@ -99,15 +118,25 @@ export default function ProductPage() {
           </div>
 
           {/* Add to Cart Button */}
+          <div className='flex justify-between flex-col sm:flex-row'>
           <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-3">
             Add to Cart
           </Button>
+          <Button className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-3">
+            Add to WistList
+          </Button>
+          </div>
           <div className='flex items-center justify-center'>
       <ReviewSection productId={product._id}/>
       </div>
         </div>
       </div>
-     
     </div>
+    <div className='flex flex-col justify-center items-center mb-5 w-2/4 m-auto'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5'>
+          {moreProducts && moreProducts.map((product) => <ProductCard key={product._id} product={product} />)}
+        </div>
+      </div>
+    </>
   );
 }

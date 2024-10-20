@@ -1,14 +1,20 @@
-import { Alert, Button, Textarea } from 'flowbite-react';
-import React, { useState } from 'react';
+import { Alert, Button, Modal, Textarea } from 'flowbite-react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import Review from './Review.jsx';
 
 export default function ReviewSection({ productId }) {
   const { currentUser } = useSelector((state) => state.user);
   const [review, setReview] = useState('');
   const [reviewError, setReviewError] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState(null);
+  const navigate = useNavigate();
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (review.length > 200) {
@@ -33,6 +39,74 @@ export default function ReviewSection({ productId }) {
     }
   };
 
+  useEffect(() => {
+    const getReviews = async () => {
+      try {
+        const res = await fetch(`/api/review/getProductReviews/${productId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setReviews(data);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    getReviews();
+  }, [productId]);
+
+  const handleLike = async(reviewId) => {
+    try {
+      if (!currentUser) {
+        navigate('/sign-in');
+        return;
+      }
+      const res = await fetch(`/api/review/likeReview/${reviewId}`, {
+        method: 'PUT',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setReviews( reviews.map((review) => 
+            review._id === reviewId
+              ? {
+                  ...review,
+                  likes: data.likes,
+                  numberOfLikes: data.likes.length,
+                } : review
+          )
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleEdit = async (review, editedContent) => {
+    setReviews(
+      reviews.map((c) =>
+        c._id === review._id ? { ...c, content: editedContent } : c
+      )
+    );
+  };
+
+  const handleDelete = async (reviewId) => {
+    setShowModal(false);
+    try {
+      if (!currentUser) {
+        navigate('/sign-in');
+        return;
+      }
+      const res = await fetch(`/api/review/deleteReview/${reviewId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setReviews(reviews.filter((review) => review._id !== reviewId));
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto w-full p-4">
       {currentUser ? (
@@ -45,7 +119,7 @@ export default function ReviewSection({ productId }) {
           />
           <Link
             to={'/dashboard?tab=profile'}
-            className="text-lg text-cyan-600 hover:underline"
+            className="text-sm text-cyan-600 hover:underline sm:text-lg"
           >
             @{currentUser.username}
           </Link>
@@ -77,7 +151,7 @@ export default function ReviewSection({ productId }) {
       </p>
       <Button
         gradientDuoTone="tealToLime"
-        className="px-6 py-2 text-lg font-semibold transition-transform transform hover:scale-105"
+        className="px-6 py-2 text-lg font-semibold transition-transform transform hover:scale-105 w-4 h-15 sm:h-fit sm:w-fit"
         type="submit">
         Submit
       </Button>
@@ -89,6 +163,57 @@ export default function ReviewSection({ productId }) {
           )}
   </form>
 )}
+{reviews.length === 0 ? (
+        <p className='text-sm my-5'>No Reviews yet!</p>
+      ) : (
+        <>
+          <div className='text-sm my-5 flex items-center gap-1'>
+            <p>Reviews</p>
+            <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+              <p>{reviews.length}</p>
+            </div>
+          </div>
+          {reviews.map((review) => (
+            <Review
+            key={review._id}
+            review={review}
+            onLike={handleLike}
+            onEdit={handleEdit}
+            onDelete={(reviewId) => {
+              setShowModal(true);
+              setReviewToDelete(reviewId);
+            }}
+            />
+          ))}
+        </>
+      )}
+            <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size='md'
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className='text-center'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+              Are you sure you want to delete this comment?
+            </h3>
+            <div className='flex justify-center gap-4'>
+              <Button
+                color='failure'
+                onClick={() => handleDelete(reviewToDelete)}
+              >
+                Yes, I'm sure
+              </Button>
+              <Button color='gray' onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
 </div>
   );
 }

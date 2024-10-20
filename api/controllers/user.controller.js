@@ -84,7 +84,7 @@ export const signout = async (req, res, next) => {
 
 
 export const getUsers = async (req, res, next) => {
-  if (!req.user.role=='buyer') {
+  if (!req.user.role=='seller') {
     return next(errorHandler(403, 'You are not allowed to see all users'));
   }
   try {

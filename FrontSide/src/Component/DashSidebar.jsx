@@ -41,11 +41,11 @@ export default function DashSidebar() {
         <Sidebar.Items>
             <Sidebar.ItemGroup>
                 <Link to='/dashboard?tab=profile'>
-                    <Sidebar.Item active={tab === 'profile'} icon={HiUser} label={currentUser.role=="buyer" ? 'Buyer':'Seller'} labelColor='dark' as='div' className='mb-2'>
+                    <Sidebar.Item active={tab === 'profile'} icon={HiUser} label={currentUser.role=="seller" ? 'Seller':'Buyer'} labelColor='dark' as='div' className='mb-2'>
                       Profile
                     </Sidebar.Item>
                 </Link>
-                {currentUser.role=="buyer" && (
+                {currentUser.role=="seller" && (
                   <Link to='/dashboard?tab=product'>
                   <Sidebar.Item active={tab === 'profile'} icon={HiDocumentText} as='div' className='mb-2'>
                     Created Poducts

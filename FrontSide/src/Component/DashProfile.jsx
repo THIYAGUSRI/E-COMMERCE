@@ -182,7 +182,7 @@ const uploadImage = async () => {
           {loading ? 'Loading...': 'Update the detail'}
           
         </Button>
-        {currentUser.role=="buyer" && (
+        {currentUser.role=="seller" && (
           <Link to={'/createproduct'}>
             <Button type='button' gradientDuoTone='purpleToPink' className='w-full rounded-full p-1'>
               Create the Product

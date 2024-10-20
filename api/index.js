@@ -6,7 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import productRoutes from './routes/product.route.js';
 import reviewRoutes from './routes/review.route.js';
 import cookieParser from 'cookie-parser';
-
+ 
 dotenv.config();
 
 mongoose.connect(process.env.MONGO)
