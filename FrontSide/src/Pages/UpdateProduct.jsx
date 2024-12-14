@@ -23,7 +23,7 @@ console.log(formData);
 useEffect(() => {
     try {
         const fetchProduct = async () => {
-          const res = await fetch(`/api/product/getproducts?postId=${productId}`);
+          const res = await fetch(`/api/product/getproducts?productId=${productId}`);
           const data = await res.json();
           if (!res.ok) {
             console.log(data.message);

@@ -84,9 +84,6 @@ export const signout = async (req, res, next) => {
 
 
 export const getUsers = async (req, res, next) => {
-  if (!req.user.role=='seller') {
-    return next(errorHandler(403, 'You are not allowed to see all users'));
-  }
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 9;
@@ -97,11 +94,16 @@ export const getUsers = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
 
+      const detail = await User.find({ 
+        ...(req.query.email && { email: req.query.email }),
+        ...(req.query.userId && { _id: req.query.userId }),});
+
     const usersWithoutPassword = users.map((user) => {
       const { password, ...rest } = user._doc;
       return rest;
     });
     res.status(200).json({
+      detail,
       users: usersWithoutPassword,
     });
   } catch (error) {

@@ -61,6 +61,12 @@ export default function Header() {
           >
             About
           </Link>
+          <Link
+            to="/userslist"
+            className={`hidden lg:block px-3 py-2 ${pathname === '/userslist' ? 'text-blue-500' : 'text-gray-500'} hover:text-blue-500`}
+          >
+            Userslist
+          </Link>
         </div>
       </div>
 
@@ -119,6 +125,12 @@ export default function Header() {
             className={`block w-full text-left px-4 py-2 border-b border-gray-200 ${pathname === '/about' ? 'text-blue-500' : 'text-gray-700'} hover:text-blue-500`}
           >
             About
+          </Link>
+          <Link
+            to="/userslist"
+            className={`block w-full text-left px-4 py-2 border-b border-gray-200 ${pathname === '/userslist' ? 'text-blue-500' : 'text-gray-700'} hover:text-blue-500`}
+          >
+            UsersList
           </Link>
         </div>
       </Navbar.Collapse>

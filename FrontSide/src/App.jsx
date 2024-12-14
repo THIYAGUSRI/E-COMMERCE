@@ -11,6 +11,9 @@ import OnlySellerPrivateRoute from './Component/OnlySellerPrivateRoute'
 import UpdateProduct from './Pages/UpdateProduct'
 import ProductPage from './Pages/ProductPage'
 import ScrollToTop from './Component/ScrollToTop'
+import About from './Pages/About'
+import UserLists from './Pages/UsersLists'
+import Details from './Pages/Details'
 
 export default function App() {
   return (
@@ -22,12 +25,15 @@ export default function App() {
           <Route path='/sign-in' element={<SignIn />}/>
           <Route path='/sign-up' element={<SignUp />}/>
           <Route path='/product/:productSlug' element={<ProductPage />}/>
+          <Route path='/detail/:userDetail' element={<Details />} />
+          <Route path='/userslist' element={<UserLists />}/>
+          <Route path='/about' element={<About />}/>
           <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<DashBoard />}/>
           </Route>
           <Route element={<OnlySellerPrivateRoute />}>
           <Route path='/createproduct' element={<CreateProduct />}/>
-          <Route path='/updateproduct/:postId' element={<UpdateProduct />}/>
+          <Route path='/updateproduct/:productId' element={<UpdateProduct />}/>
           </Route>
         </Routes>
     </BrowserRouter>
