@@ -1,18 +1,25 @@
 import { Label, Spinner, Button } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ProjectSection from "../Component/ProjectSection";
 
 export default function Details() {
   const { userDetail } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [detail, setDetail] = useState(null);
+  console.log(userDetail);
+  console.log(detail);
+  
+  
+  
+  
 
   useEffect(() => {
     const fetchDetail = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/user/getusers?email=${userDetail}`);
+        const res = await fetch(`/api/user/getusers?userId=${userDetail}`);
         const data = await res.json();
         if (!res.ok) {
           setError(true);
@@ -20,7 +27,7 @@ export default function Details() {
           return;
         }
         if (res.ok) {
-          setDetail(data.users[0]);
+          setDetail(data.detail[0]);
           setLoading(false);
           setError(false);
         }
@@ -102,25 +109,9 @@ export default function Details() {
         </div>
       </div>
       <div className="bg-white shadow-xl w-full max-w-5xl p-10 grid grid-cols-1">
-        <Label className="text-3xl text-center mb-5">About what are the Project we done</Label>
-          <p className="w-full text-gray-700 text-lg">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate
-            distinctio sed mollitia, dolores asperiores voluptatibus doloribus
-            assumenda, eligendi, recusandae expedita ratione blanditiis odio fuga
-            eius consequuntur vero? Aliquam quos laudantium a cumque at reiciendis
-            blanditiis nobis, veritatis, omnis officia repudiandae impedit error
-            ea rem soluta reprehenderit expedita quia aliquid accusamus.
-            Doloribus, commodi natus. Eius sapiente, in, sunt reiciendis qui illum
-            ad vero ut esse laborum recusandae dolor, a quia libero quod facere
-            velit molestiae atque nisi magni officia nostrum eum? Ullam dicta
-            suscipit recusandae laboriosam minima atque optio veniam quidem alias
-            neque, iusto, maxime voluptatibus. Perferendis voluptas libero totam
-            ullam quo ad. Ducimus, nostrum corporis. Laborum iure ex, laudantium
-            officia cumque quas tenetur maiores commodi? Voluptate fuga esse quo
-            fugiat cupiditate nobis accusantium amet voluptas alias, cumque
-            deserunt nemo repellat nulla praesentium placeat et, in est
-            consectetur ducimus nam! Magni, repellat. 
-          </p>
+        <ProjectSection 
+        key={detail._id}
+        projectId={detail._id}/>
         </div>
     </div>
   );

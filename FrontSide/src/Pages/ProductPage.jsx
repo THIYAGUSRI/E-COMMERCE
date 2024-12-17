@@ -127,8 +127,8 @@ export default function ProductPage() {
           </Button>
           </div>
           <div className='flex items-center justify-center'>
-      <ReviewSection productId={product._id}/>
-      </div>
+          {product && product._id && <ReviewSection productId={product._id} />}
+          </div>
         </div>
       </div>
     </div>

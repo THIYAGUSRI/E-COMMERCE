@@ -1,14 +1,26 @@
 import { Navbar, Button, Dropdown, Avatar } from 'flowbite-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { signoutSuccess } from '../redux/user/userSlice';
+import { useEffect, useState } from 'react';
 
 export default function Header() {
   const { pathname } = useLocation();
+  const location = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [ searchTerm, setSearchTerm ]= useState('');
+  const navigate = useNavigate();
+
+  useEffect( () => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get('searchTerm');
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search])
 
   const handleSignout = async () => {
     try {
@@ -26,6 +38,14 @@ export default function Header() {
       }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('searchTerm', searchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
     <Navbar className="border-b-2 px-4 lg:px-8 relative">
       <Navbar.Brand href="/"> 
@@ -39,11 +59,13 @@ export default function Header() {
       {/* Links and Search Bar Section */}
       <div className="flex flex-grow gap-4 justify-center items-center">
         <div className="hidden lg:flex items-center max-w-md relative">
-          <form>
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Search..."
               className="w-full border rounded-lg pl-4 pr-10 py-2 focus:ring-2 focus:ring-indigo-500 text-black"
+              value={searchTerm}
+              onChange={ (e) => setSearchTerm(e.target.value)}
             />
           </form>
           <AiOutlineSearch className="absolute inset-y-0 right-3 my-auto text-gray-500" />

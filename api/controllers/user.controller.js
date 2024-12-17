@@ -95,7 +95,7 @@ export const getUsers = async (req, res, next) => {
       .limit(limit);
 
       const detail = await User.find({ 
-        ...(req.query.email && { email: req.query.email }),
+        ...(req.query.email && { email: req.query.email}),
         ...(req.query.userId && { _id: req.query.userId }),});
 
     const usersWithoutPassword = users.map((user) => {

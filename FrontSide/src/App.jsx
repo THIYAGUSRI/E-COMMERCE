@@ -14,6 +14,7 @@ import ScrollToTop from './Component/ScrollToTop'
 import About from './Pages/About'
 import UserLists from './Pages/UsersLists'
 import Details from './Pages/Details'
+import Search from './Pages/Search'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path='/sign-up' element={<SignUp />}/>
           <Route path='/product/:productSlug' element={<ProductPage />}/>
           <Route path='/detail/:userDetail' element={<Details />} />
+          <Route path='/search' element={<Search />}/>
           <Route path='/userslist' element={<UserLists />}/>
           <Route path='/about' element={<About />}/>
           <Route element={<PrivateRoute />}>
