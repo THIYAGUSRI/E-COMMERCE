@@ -2,17 +2,31 @@ import { Label, Spinner, Button } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProjectSection from "../Component/ProjectSection";
+import ProductCard from "../Component/ProductCard";
 
 export default function Details() {
   const { userDetail } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [detail, setDetail] = useState(null);
-  console.log(userDetail);
-  console.log(detail);
+  const [userProducts, setUserProducts] = useState([]);
   
   
   
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`/api/product/getproducts?userId=${userDetail}`);
+        const data = await res.json();
+        if (res.ok) {
+          setUserProducts(data.products);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchProducts();
+  }, [userDetail]);
   
 
   useEffect(() => {
@@ -112,6 +126,28 @@ export default function Details() {
         <ProjectSection 
         key={detail._id}
         projectId={detail._id}/>
+        <div>
+  <div>
+    { detail.role=='seller' && userProducts.length > 0 ? (
+      <>
+      <h1 className="text-2xl font-bold mb-6 text-gray-700">Product Details</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {userProducts.map((product) => (
+          <div
+            key={product._id}
+          >
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </div>
+      </>
+    ) : (
+      <>
+      </>
+    )}
+  </div>
+</div>
+
         </div>
     </div>
   );

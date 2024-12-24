@@ -11,7 +11,7 @@ export default function Search() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSearch, setShowSearch] = useState(false); // State to toggle search form
-
+ 
   const location = useLocation();
   const navigate = useNavigate();
 

@@ -39,6 +39,7 @@ export const signin = async (req, res, next) => {
      next(errorHandler(400, 'All feild are required'));
     }
 
+    
     try {
         const validUser =  await User.findOne({ email });
         if(!validUser)

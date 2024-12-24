@@ -128,7 +128,7 @@ const handleSubmit = async (e) => {
         <TextInput id='price' placeholder='Price...' required className='flex-1' onChange={(e) => setFormData({ ...formData, price : e.target.value })} value={formData.price}/>
         <TextInput id='stock' placeholder='Stock Item...' required className='flex-1' onChange={(e) => setFormData({ ...formData, stock : e.target.value })} value={formData.stock}/>
         <Textarea id='content' placeholder='Description...' required className='flex-1' rows={5} onChange={(e) => setFormData({ ...formData, content : e.target.value })} value={formData.content}/>
-        <Button type="submit" class="rounded-full flex items-center justify-center" gradientDuoTone='pinkToOrange'>Update the Product</Button>
+        <Button type="submit" class="rounded-full flex items-center justify-center bg-gradient-to-r from-pink-500 via-orange-400 to-red-500 text-white p-2">Update the Product</Button>
         {publishError && ( <Alert className='mt-5' color='failure'> {publishError} </Alert> )}
       </form>
     </div>

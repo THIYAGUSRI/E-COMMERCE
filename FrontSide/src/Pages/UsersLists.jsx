@@ -2,7 +2,6 @@ import React from 'react'
 import { Label, Table } from 'flowbite-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 
 
 export default function UserLists() {
