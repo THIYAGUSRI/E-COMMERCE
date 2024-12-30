@@ -17,7 +17,6 @@ export default function ProjectSection({ projectId }) {
   const [imageUploadError, setImageUploadError] = useState(null);
   const navigate = useNavigate();
 
-  // Function to upload the project image
   const handleUploadImage = async () => {
     try {
       if (!file) {
@@ -54,7 +53,6 @@ export default function ProjectSection({ projectId }) {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -66,14 +64,14 @@ export default function ProjectSection({ projectId }) {
           description: project.description,
           location: project.location,
           image: project.image,
-          userId: currentUser._id, // Send the current user's ID
+          userId: currentUser._id, 
         }),
       });
       if (res.ok) {
         const data = await res.json();
-        setProjects([data, ...projects]); // Add new project to state
-        setProject(''); // Reset form
-        setShowModal(false); // Close the modal
+        setProjects([data, ...projects]); 
+        setProject(''); 
+        setShowModal(false); 
       } else {
         const errorData = await res.json();
         setProjectError(errorData.message || 'Failed to create project');
@@ -102,7 +100,6 @@ export default function ProjectSection({ projectId }) {
 
   return (
     <div>
-      {/* Project Section Header */}
       <div>
       <div className="flex flex-row justify-between mb-5">
         <Label className="text-3xl">Project Details</Label>
@@ -129,13 +126,11 @@ export default function ProjectSection({ projectId }) {
         )}
         </div>
       </div>
-      {/* Modal for Adding/Updating a Project */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup>
         <Modal.Header />
         <Modal.Body>
           <form onSubmit={handleSubmit}>
             <div>
-              {/* Image Upload Section */}
               <Label>Project Image:</Label>
               <FileInput type="file" className="mt-1 w-full p-2" onChange={(e) => setFile(e.target.files[0])} />
               <Button onClick={handleUploadImage} className="my-2">
@@ -144,8 +139,6 @@ export default function ProjectSection({ projectId }) {
               {imageUploadProgress && <p>Uploading: {imageUploadProgress}%</p>}
               {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
               {project.image && <img src={project.image} alt="Project" className="w-full h-72 object-cover my-2" />}
-
-              {/* Project Title */}
               <Label>Project Title:</Label>
               <TextInput
                 type="text"
@@ -154,8 +147,6 @@ export default function ProjectSection({ projectId }) {
                 onChange={(e) => setProject({ ...project, title: e.target.value })}
                 required
               />
-
-              {/* Project Location */}
               <Label>Project Location:</Label>
               <TextInput
                 type="text"
@@ -164,8 +155,6 @@ export default function ProjectSection({ projectId }) {
                 onChange={(e) => setProject({ ...project, location: e.target.value })}
                 required
               />
-
-              {/* Project Description */}
               <Label>Project Description:</Label>
               <Textarea
                 className="mt-1 w-full p-2 h-48"
@@ -173,8 +162,6 @@ export default function ProjectSection({ projectId }) {
                 onChange={(e) => setProject({ ...project, description: e.target.value })}
                 required
               />
-
-              {/* Form Buttons */}
               <div className="flex justify-between mt-4">
                 <Button gradientDuoTone="purpleToBlue" type="submit">
                   Submit

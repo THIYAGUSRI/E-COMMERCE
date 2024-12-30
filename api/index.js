@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import productRoutes from './routes/product.route.js';
 import reviewRoutes from './routes/review.route.js';
 import projectRoutes from './routes/project.route.js';
+import orderRoutes from './routes/order.route.js';
 import cookieParser from 'cookie-parser';
  
 dotenv.config();
@@ -32,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/review', reviewRoutes);
 app.use('/api/project', projectRoutes);
+app.use('/api/order', orderRoutes);
 
 
 app.use((err, req, res, next) => {

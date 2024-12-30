@@ -15,6 +15,7 @@ import About from './Pages/About'
 import UserLists from './Pages/UsersLists'
 import Details from './Pages/Details'
 import Search from './Pages/Search'
+import Order from './Pages/Order'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path='/search' element={<Search />}/>
           <Route path='/userslist' element={<UserLists />}/>
           <Route path='/about' element={<About />}/>
+          <Route path='/orders' element={<Order />}/>
           <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<DashBoard />}/>
           </Route>

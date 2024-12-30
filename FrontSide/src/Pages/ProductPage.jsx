@@ -1,11 +1,13 @@
 import { Button, Spinner, Modal, Label, TextInput, Textarea } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux"; // Ensure correct import
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import ReviewSection from "../Component/ReviewSection";
 import ProductCard from "../Component/ProductCard";
 
 export default function ProductPage() {
+  const { currentUser } = useSelector((state) => state.user);
   const { productSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -15,6 +17,7 @@ export default function ProductPage() {
 
   // Modal State
   const [showModal, setShowModal] = useState(false);
+  const [quantity, setQuantity] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
 
@@ -55,24 +58,48 @@ export default function ProductPage() {
     fetchMoreProducts();
   }, []);
 
-  const toggleLike = () => {
+  const toggleLike = (e) => {
+    e.preventDefault();
     setLiked(!liked);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.preventDefault();
     setShowModal(true);
   };
 
-  const handleSubmit = () => {
-    // Logic to handle form submission
-    console.log({
-      productId: product?._id,
-      deliveryDate,
-      additionalDetails,
-    });
-    setShowModal(false); // Close the modal
-    setDeliveryDate(""); // Reset form
-    setAdditionalDetails("");
+  const handleSubmit = async () => {
+    try {
+      const orderDetails = {
+        productId: product?._id,
+        userId: currentUser?._id,
+        sellerId: product?.userId,
+        quantity,
+        date: deliveryDate,
+        address: additionalDetails,
+      };
+
+      const res = await fetch("/api/order/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderDetails),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to place the order");
+      }
+
+      const data = await res.json();
+      alert("Order placed successfully:", data);
+
+      // Reset modal and form fields
+      setShowModal(false);
+      setQuantity("");
+      setDeliveryDate("");
+      setAdditionalDetails("");
+    } catch (error) {
+      console.error("Error placing order:", error.message);
+    }
   };
 
   if (loading)
@@ -122,15 +149,31 @@ export default function ProductPage() {
                 <p className="text-gray-600">{product && product.content}</p>
               </div>
             </div>
-
-            <Button
-              className="px-4 py-2 rounded-lg mt-3 text-black text-3xl"
-              gradientDuoTone="greenToBlue"
-              onClick={handleAddToCart}
-            >
-              Add to Cart
-            </Button>
-
+            {currentUser ? (
+              currentUser.role === 'seller' ? (
+                  <Button
+                    className="px-4 py-2 rounded-lg mt-3 text-black text-3xl"
+                    gradientDuoTone="greenToBlue"
+                    onClick={handleAddToCart}
+                    disabled>
+                    Add to Cart
+                  </Button>
+               ) : (
+                  <Button
+                   className="px-4 py-2 rounded-lg mt-3 text-black text-3xl"
+                   gradientDuoTone="greenToBlue"
+                   onClick={handleAddToCart}>
+                   Add to Cart
+                  </Button>
+                )
+             ) : (
+               <Button
+                className="px-4 py-2 rounded-lg mt-3 text-black text-3xl"
+                gradientDuoTone="greenToBlue"
+                disabled>
+                Add to Cart
+              </Button>
+             )}
             <ReviewSection productId={product?._id} />
           </div>
         </div>
@@ -149,6 +192,15 @@ export default function ProductPage() {
       <Modal show={showModal} onClose={() => setShowModal(false)}>
         <Modal.Header>Add to Cart</Modal.Header>
         <Modal.Body>
+          <div>
+            <Label htmlFor="quantity">Quantity</Label>
+            <TextInput
+              id="quantity"
+              type="text"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+          </div>
           <div>
             <Label htmlFor="deliveryDate">Delivery Date</Label>
             <TextInput
@@ -169,7 +221,9 @@ export default function ProductPage() {
           </div>
         </Modal.Body>
         <Modal.Footer className="flex justify-center">
-          <Button onClick={handleSubmit} gradientDuoTone='redToYellow'>Submit</Button>
+          <Button onClick={handleSubmit} gradientDuoTone="redToYellow">
+            Submit
+          </Button>
           <Button color="gray" onClick={() => setShowModal(false)}>
             Cancel
           </Button>

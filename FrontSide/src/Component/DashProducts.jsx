@@ -9,6 +9,7 @@ export default function DashProducts() {
   const [userProducts, setUserProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [productIdToDelete, setProductIdToDelete] = useState('');
+console.log(userProducts);
 
   useEffect(() => {
     const fetchProducts = async () => {

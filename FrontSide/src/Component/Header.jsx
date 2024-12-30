@@ -89,6 +89,15 @@ export default function Header() {
           >
             Userslist
           </Link>
+          {currentUser && currentUser.role === 'buyer' && (
+            <Link
+              to="/orders"
+              className={`hidden lg:block px-3 py-2 ${
+              pathname === '/orders' ? 'text-blue-500' : 'text-gray-500'
+              } hover:text-blue-500`}>
+              Orders
+            </Link>
+          )}
         </div>
       </div>
 
@@ -154,6 +163,15 @@ export default function Header() {
           >
             UsersList
           </Link>
+          {currentUser && currentUser.role === 'buyer' && (
+            <Link
+              to="/orders"
+              className={`block w-full text-left px-4 py-2 border-b border-gray-200 ${
+              pathname === '/orders' ? 'text-blue-500' : 'text-gray-700'
+              } hover:text-blue-500`}>
+              Orders
+            </Link>
+          )}
         </div>
       </Navbar.Collapse>
     </Navbar>
