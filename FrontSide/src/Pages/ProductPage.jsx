@@ -14,8 +14,6 @@ export default function ProductPage() {
   const [product, setProduct] = useState(null);
   const [liked, setLiked] = useState(false);
   const [moreProducts, setMoreProducts] = useState(null);
-
-  // Modal State
   const [showModal, setShowModal] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [deliveryDate, setDeliveryDate] = useState("");

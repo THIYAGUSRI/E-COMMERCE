@@ -17,25 +17,17 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true,
     }, 
-    totalamount: {
-        type: Number,
-       default: 0,
-    },
-    balanceamount: {
-        type: Number,
-        default: 0,
-    },
     address: {
         type: Object,
         required: true,
     },
     deliverystatus: {
         type: String,
-        default: '---',
+        default: '-',
     },
     paidstatus: {
         type: String,
-        default: '-----',
+        default: 'Unpaid',
     },
     date: {
         type: String,

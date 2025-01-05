@@ -5,7 +5,7 @@ export const createOrder = async (req, res, next) => {
   try {
     const { userId, sellerId, productId, quantity, address, date } = req.body;
     if (!userId || !sellerId || !productId || !quantity || !address || !date) {
-      return next(errorHandler(400, 'All fields are required'));
+      return next(errorHandler(403, 'All fields are required'));
     }
     const newOrder = new Order({
       userId,
@@ -35,3 +35,4 @@ export const getOrders = async (req, res, next) => {
         next(error);
     }
     };
+

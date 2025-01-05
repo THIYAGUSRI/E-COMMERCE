@@ -8,11 +8,11 @@ const productSchema = new mongoose.Schema({
     companyname: {
         type: String,
         required: true,
+        unique: true,
     },
     title: {
         type: String,
         required: true,
-        unique: true,
     },
     image: {
         type: String,

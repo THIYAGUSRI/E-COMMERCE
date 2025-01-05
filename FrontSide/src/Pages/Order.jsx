@@ -6,9 +6,11 @@ export default function Order() {
   const [userOrders, setUserOrders] = useState([]);
   const [users, setUsers] = useState([]);
   const [userProducts, setUserProducts] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedSellerId, setSelectedSellerId] = useState(null);
   const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function Order() {
       }
     };
 
-    if (currentUser._id) {
+    if (currentUser?._id) {
       fetchOrders();
     }
   }, [currentUser]);
@@ -43,9 +45,6 @@ export default function Order() {
             const data = await res.json();
             products.push(data.product);
           } else {
-            console.error(
-              `Failed to fetch product with productId: ${order.productId}`
-            );
             products.push({
               title: "Unknown Product",
               image: "",
@@ -65,6 +64,146 @@ export default function Order() {
     }
   }, [userOrders]);
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`/api/user/getusers`);
+        const data = await res.json();
+        if (res.ok) {
+          setUsers(data.users);
+        }
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const res = await fetch(`/api/transaction/gettransactions/${currentUser._id}`);
+        const data = await res.json();
+        if (res.ok) {
+          setTransactions(data);
+        }
+      } catch (error) {
+        console.error("Error fetching transactions:", error.message);
+      }
+    };
+
+    if (currentUser?._id) {
+      fetchTransactions();
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    const updateOrCreateTransaction = async () => {
+      const sellerAmounts = {};
+  
+      // Calculate total amount for each seller
+      userOrders.forEach((order) => {
+        const matchingProduct = userProducts.find(
+          (product) =>
+            product._id === order.productId && product.userId === order.sellerId
+        );
+  
+        if (matchingProduct) {
+          const price = parseInt(matchingProduct.price, 10) || 0;
+  
+          if (!sellerAmounts[order.sellerId]) {
+            sellerAmounts[order.sellerId] = 0;
+          }
+  
+          sellerAmounts[order.sellerId] += price;
+        }
+      });
+  
+      console.log("Calculated Seller Amounts:", sellerAmounts);
+  
+      // Iterate over calculated seller amounts
+      for (const sellerId in sellerAmounts) {
+        const totalAmount = sellerAmounts[sellerId];
+  
+        // Check if there's an existing transaction for this seller
+        const existingTransaction = transactions.find(
+          (transaction) =>
+            transaction.sellerId === sellerId &&
+            transaction.userId === currentUser._id
+        );
+  
+        console.log("Existing Transaction:", existingTransaction);
+  
+        if (existingTransaction) {
+          // Update existing transaction
+          if (existingTransaction.totalAmount !== totalAmount.toString()) {
+            try {
+              const res = await fetch(
+                `/api/transaction/updatetransaction/${existingTransaction._id}/${sellerId}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    totalAmount: totalAmount.toString(),
+                  }),
+                }
+              );
+  
+              if (res.ok) {
+                const updatedTransaction = await res.json();
+                setTransactions((prev) =>
+                  prev.map((tx) =>
+                    tx._id === updatedTransaction._id ? updatedTransaction : tx
+                  )
+                );
+                console.log(
+                  "Transaction updated successfully:",
+                  updatedTransaction
+                );
+              } else {
+                console.log("Failed to update transaction:", await res.json());
+              }
+            } catch (error) {
+              console.log("Error updating transaction:", error.message);
+            }
+          }
+        } else {
+          // Create a new transaction
+          try {
+            const res = await fetch("/api/transaction/createtransaction", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userId: currentUser._id,
+                sellerId,
+                totalAmount: totalAmount.toString(),
+              }),
+            });
+  
+            if (res.ok) {
+              const newTransaction = await res.json();
+              setTransactions((prev) => [...prev, newTransaction]);
+              console.log("New transaction created successfully:", newTransaction);
+            } else {
+              console.error("Failed to create transaction:", await res.json());
+            }
+          } catch (error) {
+            console.error("Error creating transaction:", error.message);
+          }
+        }
+      }
+    };
+  
+    // Run transaction logic only if there are new orders or products
+    if (userOrders.length > 0 && userProducts.length > 0) {
+      updateOrCreateTransaction();
+    }
+  }, [userOrders, userProducts, currentUser._id]); // Minimized dependency array
+  
   const openModal = (order) => {
     setSelectedOrder(order);
     setModalOpen(true);
@@ -75,37 +214,96 @@ export default function Order() {
     setModalOpen(false);
   };
 
+  const filteredOrders =
+    selectedSellerId && userOrders.length > 0 && userProducts.length > 0
+      ? userOrders.filter((order) => {
+          const product = userProducts.find(
+            (prod) =>
+              prod._id === order.productId && prod.userId === selectedSellerId
+          );
+          return product && order.sellerId === selectedSellerId;
+        })
+      : userOrders;
+
+  const handleUserClick = (sellerId) => {
+    setSelectedSellerId(sellerId);
+  };
+
+  const getTransactionDetails = (sellerId) => {
+    return transactions.find(
+      (transaction) =>
+        transaction.sellerId === sellerId && transaction.userId === currentUser._id
+    );
+  };
+
   if (error) {
     return <p>Error loading orders: {error}</p>;
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
-      {userOrders.map((order) => {
-        const product = userProducts.find(
-          (prod) => prod._id === order.productId
-        );
-        return (
-          <div
-            key={order._id}
-            className=" shadow-md rounded-lg p-2 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300"
-            onClick={() => openModal({ order, product })}
-          >
-            <img
-              src={product?.image || "/placeholder-image.png"}
-              alt={product?.title || "Unknown Product"}
-              className="w-full h-48 object-cover rounded-md mb-4"
-            />
-            <h3 className="text-lg font-bold text-gray-800">{product?.title || "Unknown Product"}</h3>
-            <p className="text-gray-600">Price: {product?.price || "N/A"}</p>
-          </div>
-        );
-      })}
+    <div className="flex flex-col md:flex-row h-screen">
+      {/* Left Side - User Details */}
+      <div className="md:w-1/3 lg:w-1/4 bg-gray-100 p-4">
+        <h1 className="text-xl font-bold text-gray-800 mb-4">Seller List</h1>
+        <div className="space-y-4">
+          {users
+            .filter((user) => user.role === "seller")
+            .map((user) => (
+              <div
+                key={user._id}
+                className={`flex items-center p-2 bg-white shadow rounded-lg cursor-pointer hover:bg-gray-200 ${
+                  selectedSellerId === user._id ? "ring-2 ring-blue-500" : ""
+                }`}
+                onClick={() => handleUserClick(user._id)}
+              >
+                <img
+                  src={user.profilePicture || "/placeholder-image.png"}
+                  alt={user.username}
+                  className="w-12 h-12 rounded-full object-cover mr-4"
+                />
+                <h3 className="text-lg font-bold text-gray-800">
+                  {user.username}
+                </h3>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      {/* Right Side - Order Details */}
+      <div className="md:w-2/3 lg:w-3/4 p-4 overflow-y-auto">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Order Details</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {filteredOrders.map((order) => {
+            const product = userProducts.find(
+              (prod) => prod._id === order.productId
+            );
+            const transaction = getTransactionDetails(order.sellerId);
+
+            return (
+              <div
+                key={order._id}
+                className="shadow-md rounded-lg p-2 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-300"
+                onClick={() => openModal({ order, product, transaction })}
+              >
+                <img
+                  src={product?.image || "/placeholder-image.png"}
+                  alt={product?.title || "Unknown Product"}
+                  className="w-full h-48 object-cover rounded-md mb-4"
+                />
+                <h3 className="text-lg font-bold text-gray-800">
+                  {product?.title || "Unknown Product"}
+                </h3>
+                <p className="text-gray-600">Price: {product?.price || "N/A"}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Modal */}
       {modalOpen && selectedOrder && (
         <Modal show={modalOpen} onClose={closeModal}>
-          <Modal.Header>Order Details</Modal.Header>
+          <Modal.Header>Order & Transaction Details</Modal.Header>
           <Modal.Body>
             <div className="space-y-4">
               <div>
@@ -120,8 +318,6 @@ export default function Order() {
               </h3>
               <p>Price: {selectedOrder.product?.price || "N/A"}</p>
               <p>Quantity: {selectedOrder.order?.quantity}</p>
-              <p>Total Amount: {selectedOrder.order?.totalamount}</p>
-              <p>Balance Amount: {selectedOrder.order?.balanceamount}</p>
               <p>Paid Status: {selectedOrder.order?.paidstatus}</p>
               <p>Delivery Status: {selectedOrder.order?.deliverystatus}</p>
               <p>
@@ -129,6 +325,18 @@ export default function Order() {
                 {new Date(selectedOrder.order?.createdAt).toLocaleDateString()}
               </p>
               <p>Delivery Date: {selectedOrder.order?.date || "N/A"}</p>
+              {selectedOrder.transaction && (
+                <>
+                  <h3 className="text-lg font-bold mt-4">Transaction Details</h3>
+                  <p>Total Amount: {selectedOrder.transaction.totalAmount}</p>
+                  <p>Paid Amount: {selectedOrder.transaction.paidAmount}</p>
+                  <p>Balance Amount: {selectedOrder.transaction.balanceAmount}</p>
+                  <p>
+                    Transaction Date:{" "}
+                    {new Date(selectedOrder.transaction.createdAt).toLocaleDateString()}
+                  </p>
+                </>
+              )}
             </div>
           </Modal.Body>
           <Modal.Footer>

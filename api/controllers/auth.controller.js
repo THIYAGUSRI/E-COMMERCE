@@ -7,9 +7,8 @@ export const signup = async (req, res, next) => {
     const { companyname, username, email, password, role, address, description, contactno } = req.body;
     if( !companyname || !username || !email || !password || !role || !address || !description || !contactno || companyname==='' || username === '' || email === '' || password === '' || role==='' || address==='' || description==='' || contactno==='' )
         {
-            next(errorHandler(400, 'All fields are required'));
+            next(errorHandler(403, 'All fields are required'));
         }
-
 
         const hashedPassword=bcryptjs.hashSync(password, 10)
 
@@ -36,7 +35,7 @@ export const signin = async (req, res, next) => {
     const {email, password }= req.body;
     if(!email || !password || email === '' || password === '')
     {
-     next(errorHandler(400, 'All feild are required'));
+     next(errorHandler(403, 'All feild are required'));
     }
 
     
