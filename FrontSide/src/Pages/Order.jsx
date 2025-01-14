@@ -38,9 +38,7 @@ export default function Order() {
       const products = [];
       try {
         for (const order of userOrders) {
-          const res = await fetch(
-            `/api/product/getproducts?productId=${order.productId}`
-          );
+          const res = await fetch(`/api/product/getproducts?productId=${order.productId}`);
           if (res.ok) {
             const data = await res.json();
             products.push(data.product);
@@ -98,101 +96,50 @@ export default function Order() {
   }, [currentUser]);
 
   useEffect(() => {
-    const updateOrCreateTransaction = async () => {
-      const sellerAmounts = {};
-  
-      // Calculate total amount for each seller
-      userOrders.forEach((order) => {
+    const checkAndCreateTransaction = async () => {
+      for (const order of userOrders) {
         const matchingProduct = userProducts.find(
           (product) =>
             product._id === order.productId && product.userId === order.sellerId
         );
   
         if (matchingProduct) {
-          const price = parseInt(matchingProduct.price, 10) || 0;
+          const sellerId = order.sellerId;
   
-          if (!sellerAmounts[order.sellerId]) {
-            sellerAmounts[order.sellerId] = 0;
-          }
+          // Check if there's an existing transaction for this seller and user
+          const existingTransaction = transactions.find(
+            (transaction) =>
+              transaction.sellerId === sellerId &&
+              transaction.userId === currentUser._id
+          );
   
-          sellerAmounts[order.sellerId] += price;
-        }
-      });
-  
-      console.log("Calculated Seller Amounts:", sellerAmounts);
-  
-      // Iterate over calculated seller amounts
-      for (const sellerId in sellerAmounts) {
-        const totalAmount = sellerAmounts[sellerId];
-  
-        // Check if there's an existing transaction for this seller
-        const existingTransaction = transactions.find(
-          (transaction) =>
-            transaction.sellerId === sellerId &&
-            transaction.userId === currentUser._id
-        );
-  
-        console.log("Existing Transaction:", existingTransaction);
-  
-        if (existingTransaction) {
-          // Update existing transaction
-          if (existingTransaction.totalAmount !== totalAmount.toString()) {
+          if (existingTransaction) {
+            console.log("Existing Transaction:", existingTransaction);
+          } else {
+            // Create a new transaction
             try {
-              const res = await fetch(
-                `/api/transaction/updatetransaction/${existingTransaction._id}/${sellerId}`,
-                {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    totalAmount: totalAmount.toString(),
-                  }),
-                }
-              );
+              const res = await fetch("/api/transaction/createtransaction", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  userId: currentUser._id,
+                  sellerId,
+                  totalAmount: matchingProduct.price.toString(), // Use the product's price directly
+                }),
+              });
   
               if (res.ok) {
-                const updatedTransaction = await res.json();
-                setTransactions((prev) =>
-                  prev.map((tx) =>
-                    tx._id === updatedTransaction._id ? updatedTransaction : tx
-                  )
-                );
-                console.log(
-                  "Transaction updated successfully:",
-                  updatedTransaction
-                );
+                const newTransaction = await res.json();
+                setTransactions((prev) => [...prev, newTransaction]);
+                console.log("New transaction created successfully:", newTransaction);
               } else {
-                console.log("Failed to update transaction:", await res.json());
+                console.error("Failed to create transaction:", await res.json());
               }
             } catch (error) {
-              console.log("Error updating transaction:", error.message);
+              console.error("Error creating transaction:", error.message);
             }
-          }
-        } else {
-          // Create a new transaction
-          try {
-            const res = await fetch("/api/transaction/createtransaction", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userId: currentUser._id,
-                sellerId,
-                totalAmount: totalAmount.toString(),
-              }),
-            });
-  
-            if (res.ok) {
-              const newTransaction = await res.json();
-              setTransactions((prev) => [...prev, newTransaction]);
-              console.log("New transaction created successfully:", newTransaction);
-            } else {
-              console.error("Failed to create transaction:", await res.json());
-            }
-          } catch (error) {
-            console.error("Error creating transaction:", error.message);
           }
         }
       }
@@ -200,9 +147,10 @@ export default function Order() {
   
     // Run transaction logic only if there are new orders or products
     if (userOrders.length > 0 && userProducts.length > 0) {
-      updateOrCreateTransaction();
+      checkAndCreateTransaction();
     }
   }, [userOrders, userProducts, currentUser._id]); // Minimized dependency array
+  
   
   const openModal = (order) => {
     setSelectedOrder(order);
@@ -294,6 +242,7 @@ export default function Order() {
                   {product?.title || "Unknown Product"}
                 </h3>
                 <p className="text-gray-600">Price: {product?.price || "N/A"}</p>
+                <p className="text-gray-600">Delivery Status: {order?.deliverystatus}</p>
               </div>
             );
           })}

@@ -18,7 +18,9 @@ const [formData, setFormData] = useState({});
 const [publishError, setPublishError] = useState(null);
 const navigate = useNavigate();
 const { productId } = useParams();
+console.log(productId);
 console.log(formData);
+
 
 useEffect(() => {
     try {
@@ -32,7 +34,8 @@ useEffect(() => {
           }
           if (res.ok) {
             setPublishError(null);
-            setFormData(data.products[0]);
+            setFormData(data.product);
+            
           }
         };
         fetchProduct();
@@ -104,10 +107,10 @@ const handleSubmit = async (e) => {
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
       <h1 className='text-center text-3xl my-7 font-semibold'>Update the Product</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
-       <TextInput id='companyname' placeholder='Company Name...' required className='flex-1' onChange={(e) => setFormData({ ...formData, companyname : e.target.value })} value={formData.companyname}/>
+       <TextInput id='companyname' placeholder='Company Name...' required className='flex-1' onChange={(e) => setFormData({ ...formData, companyname : e.target.value })} value={formData?.companyname}/>
         <div className='flex flex-col gap-4 sm:flex-row justify-between'>
-          <TextInput id='productname' placeholder='product Name...' required className='flex-1' onChange={(e) => setFormData({ ...formData, title : e.target.value })} value={formData.title}/>
-          <Select onChange={(e) => setFormData({ ...formData, category : e.target.value })} value={formData.category}>
+          <TextInput id='productname' placeholder='product Name...' required className='flex-1' onChange={(e) => setFormData({ ...formData, title : e.target.value })} value={formData?.title}/>
+          <Select onChange={(e) => setFormData({ ...formData, category : e.target.value })} value={formData?.category}>
             <option value="uncategorized"> Select the Category </option>
             <option value="stone">Rock Stone</option>
             <option value="sand">Sand</option>
@@ -123,11 +126,11 @@ const handleSubmit = async (e) => {
           <Button type='button' size='sm' class="bg-gradient-to-r from-purple-500 to-blue-500 text-white font-medium py-2 px-4 rounded-md text-sm hover:from-blue-500 hover:to-purple-500 focus:outline-none" onClick={handleUploadImage}>Upload Image</Button>
         </div>
         {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
-        {formData.image && ( <img src={formData.image} alt='upload' className='w-full h-72 object-cover' /> )}
-        <TextInput id='previousprice' placeholder='Previous Price...' required className='flex-1' onChange={(e) => setFormData({ ...formData, previousprice : e.target.value })} value={formData.previousprice} />
-        <TextInput id='price' placeholder='Price...' required className='flex-1' onChange={(e) => setFormData({ ...formData, price : e.target.value })} value={formData.price}/>
-        <TextInput id='stock' placeholder='Stock Item...' required className='flex-1' onChange={(e) => setFormData({ ...formData, stock : e.target.value })} value={formData.stock}/>
-        <Textarea id='content' placeholder='Description...' required className='flex-1' rows={5} onChange={(e) => setFormData({ ...formData, content : e.target.value })} value={formData.content}/>
+        {formData?.image && ( <img src={formData?.image} alt='upload' className='w-full h-72 object-cover' /> )}
+        <TextInput id='previousprice' placeholder='Previous Price...' required className='flex-1' onChange={(e) => setFormData({ ...formData, previousprice : e.target.value })} value={formData?.previousprice} />
+        <TextInput id='price' placeholder='Price...' required className='flex-1' onChange={(e) => setFormData({ ...formData, price : e.target.value })} value={formData?.price}/>
+        <TextInput id='stock' placeholder='Stock Item...' required className='flex-1' onChange={(e) => setFormData({ ...formData, stock : e.target.value })} value={formData?.stock}/>
+        <Textarea id='content' placeholder='Description...' required className='flex-1' rows={5} onChange={(e) => setFormData({ ...formData, content : e.target.value })} value={formData?.content}/>
         <Button type="submit" class="rounded-full flex items-center justify-center bg-gradient-to-r from-pink-500 via-orange-400 to-red-500 text-white p-2">Update the Product</Button>
         {publishError && ( <Alert className='mt-5' color='failure'> {publishError} </Alert> )}
       </form>

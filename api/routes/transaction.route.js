@@ -5,6 +5,6 @@ import { createTransaction, getTransactions, updateTransactions } from '../contr
 const router = express.Router();
 
 router.post('/createtransaction', verifyToken, createTransaction);
-router.get('/gettransactions/:userId', getTransactions);
+router.get('/gettransactions/:id', getTransactions);
 router.put('/updatetransaction/:transactionId/:sellerId', verifyToken, updateTransactions);
 export default router;

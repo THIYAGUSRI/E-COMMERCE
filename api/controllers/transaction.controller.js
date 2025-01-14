@@ -23,7 +23,13 @@ export const createTransaction = async (req, res, next) => {
 
 export const getTransactions = async (req, res, next) => {
     try {
-        const transactions = await Transaction.find({ userId : req.params.userId });
+        const { id } = req.params; // Single parameter for dynamic matching
+
+    // Fetch orders where the id matches either userId or sellerId
+    const transactions = await Transaction.find({
+      $or: [{ userId: id }, { sellerId: id }],
+    });
+
         res.status(200).json(transactions);
     } catch (error) {
         next(error);
@@ -35,20 +41,8 @@ export const getTransactions = async (req, res, next) => {
 export const updateTransactions = async (req, res, next) => {
     try {
         const { totalAmount, balanceAmount, paidAmount, date } = req.body;
-
-        // Find the transaction
-        const transaction = await Transaction.findById(req.params.transactionId);
-
-        if (!transaction) {
-            return res.status(404).json({ message: "Transaction not found" });
-        }
-
-        // Check if the user is authorized to update the transaction
-        if (
-            req.user.id !== transaction.userId && // User should be the one who owns the transaction
-            req.user.role !== "admin" // Allow admins to update transactions
-        ) {
-            return next(errorHandler(403, "You are not allowed to edit this transaction"));
+        if (!req.user.id || req.user.id!== req.params.sellerId) {
+            return next(errorHandler(403, "You are not allowed to update this transaction"));
         }
 
         // Update the transaction fields

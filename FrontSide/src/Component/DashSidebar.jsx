@@ -46,11 +46,18 @@ export default function DashSidebar() {
                     </Sidebar.Item>
                 </Link>
                 {currentUser.role=="seller" && (
+                  <>
                   <Link to='/dashboard?tab=product'>
-                  <Sidebar.Item active={tab === 'profile'} icon={HiDocumentText} as='div' className='mb-2'>
+                  <Sidebar.Item active={tab === 'product'} icon={HiDocumentText} as='div' className='mb-2'>
                     Created Poducts
                   </Sidebar.Item>
-              </Link>
+                  </Link>
+                  <Link to='/dashboard?tab=orderlist'>
+                  <Sidebar.Item active={tab === 'orderlist'} icon={HiDocumentText} as='div' className='mb-2'>
+                    Ordered Lists
+                  </Sidebar.Item>
+                  </Link>
+                  </>
                 )}
 
                 <Sidebar.Item icon={HiArrowSmRight} className='cursor-pointer' onClick={handleSignout}>

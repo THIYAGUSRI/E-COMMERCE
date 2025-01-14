@@ -73,7 +73,7 @@ export const createReview = async (req, res, next) => {
           req.params.reviewId,
           {
             content: req.body.content,
-          },
+          }, 
           { new: true }
         );
         res.status(200).json(editedReview);
@@ -95,7 +95,7 @@ export const createReview = async (req, res, next) => {
         }
         await Review.findByIdAndDelete(req.params.reviewId);
         res.status(200).json('Review has been deleted');
-      } catch (error) {
+      } catch (error) { 
         next(error);
       }
     };

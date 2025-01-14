@@ -177,14 +177,15 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <div className="flex flex-col justify-center items-center mb-5 w-2/4 m-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
-          {moreProducts &&
-            moreProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-        </div>
-      </div>
+      <div className="flex flex-col justify-center items-center mb-5 w-full m-auto">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5 max-w-screen-xl">
+    {moreProducts &&
+      moreProducts.map((product) => (
+        <ProductCard key={product._id} product={product} />
+      ))}
+  </div>
+</div>
+
 
       {/* Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)}>

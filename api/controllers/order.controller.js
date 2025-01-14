@@ -23,16 +23,48 @@ export const createOrder = async (req, res, next) => {
 };
 
 export const getOrders = async (req, res, next) => {
-    try {
-        const orders = await Order.find( { userId : req.params.userId } );
-        const totalOrders = await Order.countDocuments();
+  try {
+    const { id } = req.params; // Single parameter for dynamic matching
 
-        res.status(200).json({
-            orders,
-            totalOrders,
-        });
-    } catch (error) {
-        next(error);
+    // Fetch orders where the id matches either userId or sellerId
+    const orders = await Order.find({
+      $or: [{ userId: id }, { sellerId: id }],
+    });
+
+    const totalOrders = await Order.countDocuments();
+
+    res.status(200).json({
+      orders,
+      totalOrders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const updateOrder = async (req, res, next) => {
+  try {
+    const updatedOrder = await Order.findById(req.params.orderId);
+    if (!updatedOrder) {
+      return next(errorHandler(404, 'Order not found'));
     }
-    };
+    if(req.user.role !== "seller" && updatedOrder.sellerId !== req.user.id) {
+      return next(errorHandler(403, 'You are not allowed to edit this order'));
+    }
+
+    const editOrder = await Order.findByIdAndUpdate(
+      req.params.orderId,
+      { $set
+        : req.body
+      },
+      { new: true } 
+    );
+    res.status(200).json(editOrder);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 

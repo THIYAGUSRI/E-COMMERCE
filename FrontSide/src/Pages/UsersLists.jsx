@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Label, Table } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Label, Table } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 export default function UserLists() {
   const [users, setUsers] = useState([]);
@@ -29,21 +29,25 @@ export default function UserLists() {
         <div className="overflow-x-auto">
           <Table hoverable className="w-full border-collapse">
             <Table.Head className="bg-transparent">
-              <Table.HeadCell className="bg-gray-600 text-white">Date Created</Table.HeadCell>
-              <Table.HeadCell className="bg-gray-600 text-white">User Image</Table.HeadCell>
-              <Table.HeadCell className="bg-gray-600 text-white">User Name</Table.HeadCell>
-              <Table.HeadCell className="bg-gray-600 text-white">Seller / Buyer</Table.HeadCell>
+              <Table.HeadCell className="bg-gray-600 text-white text-xl">Date Created</Table.HeadCell>
+              <Table.HeadCell className="bg-gray-600 text-white text-xl">User Image</Table.HeadCell>
+              <Table.HeadCell className="bg-gray-600 text-white text-xl">User Name</Table.HeadCell>
+              <Table.HeadCell className="bg-gray-600 text-white text-xl">Seller / Buyer</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y border border-b-3">
               {users.map((user) => (
                 <Table.Row key={user._id} className="bg-transparent">
-                  <Table.Cell className="text-black">{new Date(user.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell className="text-black text-2xl">
+                    {new Date(user.updatedAt).toLocaleDateString()}
+                  </Table.Cell>
                   <Table.Cell>
+                    <Link to={`/detail/${user._id}`}>
                     <img
-                      src={user.profilePicture || 'https://via.placeholder.com/150'}
+                      src={user.profilePicture || "https://via.placeholder.com/150"}
                       alt={user.username}
-                      className="w-14 h-15 object-cover rounded-full"
+                      className="w-16 h-16 object-cover rounded-full border border-gray-300"
                     />
+                    </Link>
                   </Table.Cell>
                   <Table.Cell>
                     <Link to={`/detail/${user._id}`} className="text-2xl text-black flex items-center">
@@ -51,10 +55,10 @@ export default function UserLists() {
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    {user.role === 'seller' ? (
-                      <Label className="text-xl">Seller</Label>
+                    {user.role === "seller" ? (
+                      <Label className="text-2xl">Seller</Label>
                     ) : (
-                      <Label className="text-xl">Buyer</Label>
+                      <Label className="text-2xl">Buyer</Label>
                     )}
                   </Table.Cell>
                 </Table.Row>

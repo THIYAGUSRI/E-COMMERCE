@@ -57,8 +57,8 @@ console.log(userProducts);
           <Table hoverable className="w-full border-collapse">
             <Table.Head className="bg-transparent">
               <Table.HeadCell className='bg-gray-600 text-white'>Date Updated</Table.HeadCell>
-              <Table.HeadCell className='bg-gray-600 text-white'>Post Image</Table.HeadCell>
-              <Table.HeadCell className='bg-gray-600 text-white'>Post Title</Table.HeadCell>
+              <Table.HeadCell className='bg-gray-600 text-white'>Product Image</Table.HeadCell>
+              <Table.HeadCell className='bg-gray-600 text-white'>Product Title</Table.HeadCell>
               <Table.HeadCell className='bg-gray-600 text-white'>Category</Table.HeadCell>
               <Table.HeadCell className='bg-gray-600 text-white'>Delete</Table.HeadCell>
               <Table.HeadCell className='bg-gray-600 text-white'>Edit</Table.HeadCell>
