@@ -9,6 +9,7 @@ import projectRoutes from './routes/project.route.js';
 import orderRoutes from './routes/order.route.js';
 import transactionRoutes from './routes/transaction.route.js';
 import cookieParser from 'cookie-parser';
+import path from 'path';
  
 dotenv.config();
 
@@ -18,6 +19,8 @@ mongoose.connect(process.env.MONGO)
     }).catch( err => {
       console.log(err);
     });
+
+    const __dirname = path.resolve();
 
 const app=express();
 
@@ -36,6 +39,12 @@ app.use('/api/review', reviewRoutes);
 app.use('/api/project', projectRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/transaction', transactionRoutes);
+
+app.use(express.static(path.join(__dirname, '/FrontSide/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'FrontSide', 'dist', 'index.html'));
+});
 
 
 app.use((err, req, res, next) => {

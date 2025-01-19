@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '../Component/ProductCard';
+import { Carousel } from "flowbite-react";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -15,7 +16,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center">
-      {/* Page Header */}
       <header className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 py-8 shadow-md mb-8">
         <h1 className="text-4xl text-white font-extrabold text-center">
           Our Featured Products
@@ -24,6 +24,48 @@ export default function Home() {
           Explore the best products handpicked just for you!
         </p>
       </header>
+
+      <div>
+        <div className="h-56 sm:h-64 xl:h-80 2xl:h-96 w-full">
+          <Carousel>
+            <div className="flex justify-center items-center h-full">
+              <img
+                src="https://www.google.com/imgres?imgurl=https://us.123rf.com/450wm/yupiramos/yupiramos1503/yupiramos150303159/37306550-delivery-design-over-blue-background-vector-illustration.jpg?ver%3D6&tbnid=fd0C1_A8E3idTM&vet=1&imgrefurl=https://www.123rf.com/clipart-vector/supply_chain_management.html&docid=4cQM4DZizWgXLM&w=450&h=450&itg=1&hl=en_GB&source=sh/x/im/m5/5&kgs=12a2d2fc160b367e"
+                alt="Product 1"
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <div className="flex justify-center items-center h-full">
+              <img
+                src="https://www.google.com/imgres?imgurl=https://us.123rf.com/450wm/yupiramos/yupiramos1503/yupiramos150303159/37306550-delivery-design-over-blue-background-vector-illustration.jpg?ver%3D6&tbnid=fd0C1_A8E3idTM&vet=1&imgrefurl=https://www.123rf.com/clipart-vector/supply_chain_management.html&docid=4cQM4DZizWgXLM&w=450&h=450&itg=1&hl=en_GB&source=sh/x/im/m5/5&kgs=12a2d2fc160b367e"
+                alt="Product 2"
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <div className="flex justify-center items-center h-full">
+              <img
+                src="https://www.google.com/imgres?imgurl=https://us.123rf.com/450wm/yupiramos/yupiramos1503/yupiramos150303159/37306550-delivery-design-over-blue-background-vector-illustration.jpg?ver%3D6&tbnid=fd0C1_A8E3idTM&vet=1&imgrefurl=https://www.123rf.com/clipart-vector/supply_chain_management.html&docid=4cQM4DZizWgXLM&w=450&h=450&itg=1&hl=en_GB&source=sh/x/im/m5/5&kgs=12a2d2fc160b367e"
+                alt="Product 3"
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <div className="flex justify-center items-center h-full">
+              <img
+                src="https://www.google.com/imgres?imgurl=https://us.123rf.com/450wm/yupiramos/yupiramos1503/yupiramos150303159/37306550-delivery-design-over-blue-background-vector-illustration.jpg?ver%3D6&tbnid=fd0C1_A8E3idTM&vet=1&imgrefurl=https://www.123rf.com/clipart-vector/supply_chain_management.html&docid=4cQM4DZizWgXLM&w=450&h=450&itg=1&hl=en_GB&source=sh/x/im/m5/5&kgs=12a2d2fc160b367e"
+                alt="Product 4"
+                className="object-cover w-full h-full"
+              />
+            </div>
+            <div className="flex justify-center items-center h-full">
+              <img
+                src="https://www.google.com/imgres?imgurl=https://us.123rf.com/450wm/yupiramos/yupiramos1503/yupiramos150303159/37306550-delivery-design-over-blue-background-vector-illustration.jpg?ver%3D6&tbnid=fd0C1_A8E3idTM&vet=1&imgrefurl=https://www.123rf.com/clipart-vector/supply_chain_management.html&docid=4cQM4DZizWgXLM&w=450&h=450&itg=1&hl=en_GB&source=sh/x/im/m5/5&kgs=12a2d2fc160b367e"
+                alt="Product 5"
+                className="object-cover w-full h-full"
+              />
+            </div>
+          </Carousel>
+        </div>
+      </div>
 
       {/* Product Grid */}
       {products && products.length > 0 ? (
